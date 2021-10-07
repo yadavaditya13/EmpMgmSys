@@ -1,0 +1,19 @@
+CREATE DATABASE EMFinalAssessment;
+use EMFinalAssessment;
+
+CREATE TABLE employee (
+    emp_id int NOT NULL AUTO_INCREMENT,
+    last_name varchar(20),
+    first_name varchar(20),
+    email varchar(20),
+    address varchar(100),
+    phone_no varchar(14),
+    birth_date date,
+    hire_date date,
+    base_location varchar(20),
+    manager_name varchar(40),
+    PRIMARY KEY (emp_id)
+);
+
+
+
