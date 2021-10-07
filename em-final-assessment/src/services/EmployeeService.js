@@ -27,6 +27,23 @@ class EmployeeService {
     deleteEmployee(employeeId){
         return axios.delete(EMPLOYEE_API_BASE_URL + '/' + employeeId);
     }
+
+    getEmployeesByName(empName){
+        return axios.get('http://localhost:8090/api/employee/name/' + empName);
+    }
+
+    getEmployeesByEmail(empEmail){
+        return axios.get('http://localhost:8090/api/employee/email/' + empEmail);
+    }
+    getEmployeesByPhone(empPhone){
+        return axios.get(EMPLOYEE_API_BASE_URL + '/phone/' + empPhone);
+    }
+    getEmployeesByManager(empManager){
+        return axios.get(EMPLOYEE_API_BASE_URL + '/manager/' + empManager);
+    }
+    getEmployeesByLocation(empLocation){
+        return axios.get(EMPLOYEE_API_BASE_URL + '/location/' + empLocation);
+    }
 }
 
 export default new EmployeeService()

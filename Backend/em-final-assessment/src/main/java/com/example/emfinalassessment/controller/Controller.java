@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
@@ -56,6 +58,26 @@ public class Controller {
 	public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
 		Employee emp = employeeRepository.findById(id).orElseThrow(NoSuchElementException::new);
 		return ResponseEntity.ok(emp);
+	}
+	
+	@GetMapping("/employee/sort/{col}/{order}")
+	@ResponseBody
+	public List<Employee> getSorted(@PathVariable String col,@PathVariable String order){
+		
+		List<Employee> emp;
+		if(order.equals("asc")) {
+			emp = employeeRepository.findAll(Sort.by(Sort.Direction.ASC,col));
+			
+		}
+		else if(order.equals("decs")) {
+			emp = employeeRepository.findAll(Sort.by(Sort.Direction.DESC,col));
+			
+		}
+		else {
+			emp = employeeRepository.findAll();
+			
+		}
+		return emp;
 	}
 
 	@PostMapping("/employee")
@@ -98,12 +120,14 @@ public class Controller {
 	@GetMapping("/employeepage")
 	public ResponseEntity<Map<String, Object>> getAll(
 			@RequestParam(defaultValue="0") int page,
-			@RequestParam(defaultValue="5") int size
+			@RequestParam(defaultValue="5") int size,
+			@RequestParam(defaultValue="id") String sortBy,
+			@RequestParam(defaultValue="asc") String sortDir
 			) {
 		
 		try {
 			List<Employee> employees = new ArrayList<Employee>();
-			Pageable paging = PageRequest.of(page, size);
+			Pageable paging = PageRequest.of(page, size, sortDir.equalsIgnoreCase("asc")?Sort.by(sortBy).ascending():Sort.by(sortBy).descending());
 			
 			Page<Employee> pageEmp;
 			pageEmp = employeeRepository.findAll(paging);
@@ -122,5 +146,45 @@ public class Controller {
 		      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 		    }
 	}
+	
+	// Search Employee Name
+		@RequestMapping("/employee/name/{name}")
+		@ResponseBody
+		public List<Employee> searchEmployeeName(@PathVariable String name) {
+			List<Employee> emp = employeeRepository.searchByName(name);
+			return emp;
+		}
+
+	//Search Employee Email
+		@RequestMapping("/employee/email/{email}")
+		@ResponseBody
+		public List<Employee> searchEmployeeEmail(@PathVariable String email) {
+			List<Employee> emp = employeeRepository.searchByEmail(email);
+			return emp;
+		}
+
+	//Search Employee Phone
+		@RequestMapping("/employee/phone/{phone}")
+		@ResponseBody
+		public List<Employee> searchEmployeePhone(@PathVariable String phone) {
+			List<Employee> emp = employeeRepository.searchByPhone(phone);
+			return emp;
+		}
+
+	//Search Employee Manager
+		@RequestMapping("/employee/manager/{manager}")
+		@ResponseBody
+		public List<Employee> searchEmployeeManager(@PathVariable String manager) {
+			List<Employee> emp = employeeRepository.searchByManager(manager);
+			return emp;
+		}
+
+	//Search Employee Location
+		@RequestMapping("/employee/location/{location}")
+		@ResponseBody
+		public List<Employee> searchEmployeeBaseLocation(@PathVariable String location) {
+			List<Employee> emp = employeeRepository.searchByBaseLocation(location);
+			return emp;
+		}
 
 }
